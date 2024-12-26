@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-10">
+        <h1 class="text-2xl font-bold mb-6 text-center">Attendance Dashboard</h1>
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-xl font-bold mb-4">Upload Attendance CSV</h2>
+            <input type="file" id="csvFile" class="form-control mb-4">
+            <button id="uploadBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Upload
+            </button>
+            <p id="uploadStatus" class="mt-4 text-gray-500"></p>
+        </div>
+    </div>
+    <script>
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+            const file = document.getElementById('csvFile').files[0];
+            if (!file || file.size > 30 * 1024 * 1024) {
+                alert("Please upload a valid CSV file under 30 MB.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch("http://localhost:5000/upload", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('uploadStatus').textContent = data.message;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
